@@ -9,19 +9,6 @@ A simple and user-friendly web application that allows users to search for movie
 - **Watch Later**: Save movies to a "Watch Later" list for future reference.
 - **Responsive Design**: Accessible on both desktop and mobile devices.
 
-## Technologies Used
-
-- **Frontend**: HTML, CSS, JavaScript (add specific frameworks like React if applicable).
-- **Backend**: (e.g., Node.js, Flask, or Django).
-- **Database**: (e.g., MongoDB, PostgreSQL, or Firebase).
-- **API**: Integration with a movie database API like [TMDb](https://www.themoviedb.org/) or [OMDb](http://www.omdbapi.com/).
-
-## Getting Started
-
-### Prerequisites
-
-- [Node.js](https://nodejs.org/) (if using Node.js for the backend)
-- API Key for the movie database API (e.g., TMDb or OMDb)
 
 ### Installation
 
