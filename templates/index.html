@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MovieFind</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Disable scrolling when the popup is visible */
+    body.popup-active {
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-gray-100 dark:bg-zinc-900 text-black dark:text-white">
+  <!-- Main Content -->
+  <div class="container mx-auto px-4 py-8">
+    <div class="flex justify-between items-center mb-8">
+      <h1 class="text-4xl font-bold">MovieFind</h1>
+      <a href="/logout">
+        <button class="px-4 py-2 bg-black text-white rounded-md dark:bg-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200">
+          Logout
+        </button>
+      </a>
+    </div>
+
+    <div class="flex flex-col lg:flex-row gap-8">
+      <div class="w-full lg:w-2/3">
+        <h2 class="text-2xl font-semibold mb-4">Enter movie here</h2>
+        <form id="movieForm" class="flex gap-2">
+          <input type="text" id="search_form" placeholder="Enter movie title" class="flex-grow px-4 py-2 rounded-md bg-white dark:bg-zinc-800 border border-gray-300 dark:border-zinc-700 focus:outline-none">
+          <button id="submit_btn" type="submit" class="px-6 py-2 bg-black text-white rounded-md dark:bg-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200">
+            Search
+          </button>
+        </form>
+      </div>
+
+      <div class="w-full lg:w-1/3">
+        <h2 class="text-2xl font-semibold mb-4">Your Watchlist</h2>
+          {% if movies %}
+            {% for movie in movies %}
+               {% if movie[1] and movie[2] and movie[3] and movie[4] and movie[5] %}
+               <div class="movie_card cursor-pointer mb-4 bg-white dark:bg-zinc-800 rounded-lg p-4 shadow-md">
+                    <div class="flex gap-4 " id="movie_card_container">
+                      <img
+                        src="{{ movie[6] }}"
+                        class="rounded-md w-24 h-auto"
+                      />
+                      <div>
+                        <h3 class="text-3xl pb-3 font-semibold movie_title_card">{{ movie[1] }}</h3>
+                        <p class="text-gray-600 dark:text-gray-400 pb-4">Rate: <span>{{ movie[3]}} / 10</span></p>
+                        <p class="text-sm text-gray-500 dark:text-gray-500">
+                          Genre:<u>{{ movie[2] }}</u>
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                    {% else %}
+                  {% endif %}
+                {% endfor %}
+              {% else %}
+              {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Popup for watchlist -->
+  <div id="popup" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
+    <div class="bg-white dark:bg-zinc-800 rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
+      <div class="flex flex-col md:flex-row h-full">
+        <div class="md:w-1/2 h-64 md:h-auto">
+          <iframe id="trailer" src="" class="w-full h-full"></iframe>
+        </div>
+        <div class="md:w-1/2 p-6 overflow-y-auto">
+          <form id="watchlistMovieForm" action="/delete_movie" method="post">
+            <!-- Movie Title -->
+            <div class="flex justify-between items-start mb-4">
+              <p class="modal_label">
+                <span id="watchlistmovieTitle" class="text-4xl font-bold text-black dark:text-white"></span>
+                <input type="hidden" name="title" id="inputTitlewatchlist">
+              </p>
+              <button class="closePopup text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+                &times;
+              </button>
+            </div>
+
+            <!-- Movie Rating -->
+            <p class="modal_label pb-3">
+              Rating:
+              <span id="watchlistmovieRating" class="text-gray-600 dark:text-gray-300 mb-2"></span>
+              <input type="hidden" name="rating" id="inputRatingwatchlist" >
+            </p>
+
+            <!-- Movie Genre -->
+            <p class="modal_label pb-3">
+              Genre:
+              <span id="watchlistmovieGenre" class="text-gray-600 dark:text-gray-300 mb-4"></span>
+              <input type="hidden" name="genre" id="inputGenrewatchlist">
+            </p>
+
+            <!-- Movie Description -->
+            <p class="modal_label pb-3">
+              Plot:
+              <span id="watchlistmoviePlot" class="text-gray-700 dark:text-gray-200"></span>
+              <input type="hidden" name="plot" id="inputPlotwatchlist" >
+            </p>
+
+            <!-- Movie Trailer URL -->
+            <p class="modal_label pb-3">
+              Available link to watch your movie:
+              <span><a id="watchlistvideoUrl"  target="_blank">Click here to watch</a></span>
+              <input type="hidden" name="videoUrl" id="inputVideoUrl" >
+            </p>
+
+            <!-- Movie Trailer URL -->
+            <p class="modal_label pb-3">
+              Available link to watch your movie:
+              <span><a id="watchlistexternalUrl"  target="_blank"></a></span>
+              <input type="hidden" name="videoUrl" id="inputExternalUrl" >
+            </p>
+
+            <!-- Watched Button -->
+            <button
+              type="submit"
+              id="done_watching"
+              class="mt-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-md transition-colors"
+            >
+              Done Watching
+            </button>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- add to watchlist -->
+  <div id="AddMovieModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 hidden" aria-hidden="true">
+    <div class="bg-white dark:bg-zinc-800 rounded-lg shadow-xl max-w-3xl w-full overflow-hidden">
+    <div class="flex flex-col md:flex-row">
+      <!-- Video Section -->
+      <div class="md:w-1/2">
+        <iframe
+          id="iframe"
+          width="100%"
+          height="300"
+          src=""
+          title="Movie Trailer"
+          class="rounded-t-lg md:rounded-tr-none md:rounded-l-lg w-full h-full"
+          allowfullscreen>
+        </iframe>
+      </div>
+
+      <!-- Form Section -->
+      <div class="md:w-1/2 p-6">
+        <form id="movieForm" action="/watchlist" method="post" class="space-y-4">
+          <!-- Title -->
+          <div class="flex justify-between items-start mb-4">
+            <p class="modal_label">
+              <span id="movieTitle" class="text-4xl font-bold text-black dark:text-white"></span>
+              <input type="hidden" name="title" id="inputTitle">
+            </p>
+            <button  class=" closePopup text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+              &times;
+            </button>
+            </div>
+
+          <!-- Genre -->
+          <p class="modal_label">
+            Genre:
+            <span id="movieGenre" class="text-gray-600 dark:text-gray-300"></span>
+            <input type="hidden" name="genre" id="inputGenre">
+          </p>
+
+          <!-- Rating -->
+          <p class="modal_label">
+            Rating:
+            <span id="movieRating" class="text-gray-600 dark:text-gray-300"></span>
+            <input type="hidden" name="rating" id="inputRating">
+          </p>
+
+          <!-- Plot -->
+          <p class="modal_label">
+            Plot:
+            <span id="moviePlot" class="text-gray-700 dark:text-gray-200"></span>
+            <input type="hidden" name="plot" id="inputPlot">
+          </p>
+
+          <!-- Director -->
+          <p class="modal_label">
+            Director:
+            <span id="movieDirector" class="text-gray-600 dark:text-gray-300"></span>
+            <input type="hidden" name="director" id="inputDirector">
+            <input type="hidden" name="poster" id="inputPoster">
+          </p>
+
+          <!-- Add to Watchlist Button -->
+          <button
+            type="submit"
+            id="add_to_watchlist"
+            class="w-full px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-md transition-colors"
+          >
+            Add to Watchlist
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <!-- splash loading screen -->
+  <div id="splashScreen" class="hidden fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
+    <!-- Loading Splash Screen -->
+      <div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 w-screen h-screen">
+        <div class="bg-white p-8 rounded-lg shadow-lg text-center w-80">
+          <!-- Duck Animation or Placeholder -->
+          <div class="w-16 h-16 mb-4 mx-auto">
+            <img src="{{ url_for('static', filename='/img/load.gif') }}" alt="">
+          </div>
+          <h2 class="text-xl font-bold text-black">Getting your movie</h2>
+          <p class="mt-2 text-sm text-gray-600">Please wait...</p>
+        </div>
+      </div>
+
+
+  </div>
+
+
+  <!-- JavaScript -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+  <script>
+
+
+    const themeToggle = document.getElementById('themeToggle');
+    const htmlElement = document.documentElement;
+
+    if (themeToggle) {
+        themeToggle.addEventListener('click', () => {
+            if (htmlElement.classList.contains('dark')) {
+                htmlElement.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+            } else {
+                htmlElement.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            }
+        });
+
+        // Persist theme on page reload
+        if (localStorage.getItem('theme') === 'dark') {
+            htmlElement.classList.add('dark');
+        } else {
+            htmlElement.classList.remove('dark');
+        }
+    } else {
+        console.warn("Theme toggle button not found.");
+    }
+
+    $(document).ready(function() {
+
+      const popup = $('#popup');
+      const rev_popUp = $('.closePopup');
+      const addMovieModal = $('#AddMovieModal');
+
+
+      rev_popUp.click(function(e){
+        e.preventDefault();
+        popup.addClass("hidden");
+        addMovieModal.addClass("hidden");
+      });
+
+
+
+      $('.movie_card').click(function (e) {
+      const searchText = $(this).find('.movie_title_card').text().trim();
+      console.log(searchText);
+
+       $('#splashScreen').removeClass('hidden').fadeIn();
+
+        $.ajax({
+            url: '/check_database_movies',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({ title: searchText }),
+            success: function (response) {
+                console.log(response);
+
+                // Display movie information in the modal
+                if (response.movies.length > 0) {
+                    const movie = response.movies[0];
+                    $('#trailer').attr('src', movie.trailer);
+                    $('#watchlistmovieTitle').text(` ${movie.title}`);
+                    $('#watchlistmovieGenre').text(` ${movie.genre}`);
+                    $('#watchlistmovieRating').text(` ${movie.rating}`);
+                    $('#watchlistmoviePlot').text(` ${movie.plot}`);
+                    $('#watchlistmovieDirector').text(` ${movie.director}`);
+                } else {
+                    alert("No movie found!");
+                }
+
+                // Display the first valid video streaming URL (Netflix/Amazon Prime)
+                if (response.search_urls.length > 0) {
+                    const videoUrl = response.search_urls[0].url;
+                    $('#watchlistvideoUrl').attr('href', videoUrl).text("Watch on " + response.search_urls[0].name);
+                    $('#inputVideoUrl').val(videoUrl);
+                } else {
+                    $('#watchlistvideoUrl').attr('href', '').text('No streaming link available');
+                    $('#inputVideoUrl').val('');
+                }
+
+                // Display the first valid external link (FMovies/123Movies)
+                if (response.search_urls.length > 0) {
+                    const externalUrl = response.search_urls[1].url;
+                    $('#watchlistexternalUrl').attr('href', externalUrl).text("Watch on " + response.search_urls[1].name);
+                    $('#inputExternalUrl').val(externalUrl);
+                } else {
+                    $('#watchlistexternalUrl').attr('href', '').text('No external link available');
+                    $('#inputExternalUrl').val('');
+                }
+                 $('#splashScreen').fadeOut();
+                popup.removeClass("hidden");
+                popup.addClass("popup-active");
+
+            },
+            error: function (xhr, status, error) {
+                console.error("Error:", error);
+                alert("An error occurred while searching for the movie.");
+            }
+        });
+    });
+
+      $('#done_watching').click(function (e) {
+        e.preventDefault();
+        const movieTitle = $('#watchlistmovieTitle').text(); // Get the movie title to delete
+        console.log(movieTitle);
+
+        $.ajax({
+          url: '/delete_movie',  // Ensure this matches backend
+          type: 'POST',          // Explicitly POST
+          contentType: 'application/json',
+          data: JSON.stringify({ title: movieTitle }),
+          success: function (response) {
+              console.log("Response from server:", response);
+              window.location.href = "/main_page";
+              // $('#movie_card_container').remove();
+          },
+          error: function (xhr, status, error) {
+              console.error("AJAX Error - Status:", status, "Error:", error);
+              console.log("Response Text:", xhr.responseText);
+          }
+      });
+
+    });
+
+
+    $('#submit_btn').click(function(e) {
+      console.log("sample1");
+      e.preventDefault(); // Prevent the form from submitting normally
+
+      let movieTitle = $('#search_form').val();
+
+      // Send AJAX request with JSON data
+      $.ajax({
+        url: '/get_movies',  // Backend route
+        method: 'POST',
+        contentType: 'application/json',  // Specify content type as JSON
+        data: JSON.stringify({ movie: movieTitle }),  // Send data as JSON
+        success: function(data) {
+
+          $('#iframe').attr('src',data.Trailer);
+          // Populate modal with movie data
+          $('#movieTitle').text(` ${data.Title}`);
+          $('#movieGenre').text(` ${data.Genre}`);
+          $('#movieRating').text(` ${data.imdbRating}`);
+          $('#moviePlot').text(` ${data.Plot}`);
+          $('#movieDirector').text(` ${data.Director}`);
+
+          $('#inputTitle').val(`${data.Title}`);
+          $('#inputGenre').val(`${data.Genre}`);
+         $('#inputRating').val(`${data.imdbRating}`);
+         $('#inputPlot').val(`${data.Plot}`);
+         $('#inputDirector').val(`${data.Director}`);
+         $('#inputPoster').val(`${data.Poster}`);
+          // Show the modal
+          addMovieModal.removeClass("hidden");
+          addMovieModal.addClass("popup-active");
+        },
+        error: function(xhr, status, error) {
+          console.error("AJAX Error: ", status, error);
+        }
+      });
+    });
+
+
+
+});
+
+
+  </script>
+</body>
+</html>

@@ -1,0 +1,164 @@
+@import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
+
+#title_logo{
+  padding-left: 186px;
+    padding-top: 21px;
+    font-size: 28px;
+    font-family: "Pacifico", cursive;
+  font-weight: 400;
+  font-style: normal;
+
+}
+
+#main_container{
+  padding-left: 180px;
+  padding-right: 180px;
+  padding-top: 100px;
+
+}
+
+#movie_title{
+  font-size: 30px;
+}
+
+
+#search_form{
+  height: 56px;
+}
+
+#submit_btn{
+  margin-top: 20px;
+  border: none;
+  background-color: black;
+  width: 90px;
+  text-align: center;
+  color: white;
+  padding-top: 9px;
+  padding-bottom: 9px;
+  border-radius: 5px;
+}
+
+#movie_list_container{
+  padding-left: 150px;
+}
+
+.movie_card{
+  margin-top: 20px;
+  border-radius: 8px;
+  border: 1px solid black;
+  margin-bottom: 20px;
+}
+
+.movie_card:hover{
+  background-color: #1e272e;
+  cursor: pointer;
+  color: white;
+  transition: 0.7s;
+}
+
+#movie_list_container {
+  max-height: 600px; /* Adjust height as needed */
+  overflow-y: auto;  /* Enables vertical scrolling */
+  padding-right: 20px; /* Adds space for scrollbar */
+}
+
+
+#movie_list_container::-webkit-scrollbar {
+  width: 8px;
+}
+
+#movie_list_container::-webkit-scrollbar-thumb {
+  background-color: #888;
+  border-radius: 4px;
+}
+
+#movie_list_container::-webkit-scrollbar-thumb:hover {
+  background-color: #555;
+}
+
+
+#poster_container{
+  height: 154px;
+}
+
+#poster_container img{
+  height: 100%;
+}
+
+#Movie_title_card{
+  padding-top: 25px;
+  padding-left: 25px;
+  font-size: 27px;
+  font-weight: bold;
+}
+#Movie_genre_card{
+  padding-top: 25px;
+  padding-left: 25px;
+  font-size: 13px;
+}
+
+#Movie_rate_card{
+  padding-top: 43px;
+      text-align: right;
+      padding-right: 51px;
+      font-size: 14px;
+
+}
+#Movie_rate_card span{
+font-size: 28px !important;
+}
+
+
+.modal-dialog{
+  margin-left: 523px !important;
+margin-top: 206px !important;
+}
+
+.modal-content{
+  padding: 20px !important;
+  width: 866px !important;
+}
+
+iframe{
+  border-radius: 15px;
+  margin-top: 19px;
+}
+
+#add_to_watchlist{
+  width: 100%;
+  background-color: #1e272e;
+  border: none;
+  color: white;
+  padding: 10px;
+  border-radius: 4px;
+}
+
+#done_watching{
+  width: 100%;
+  background-color: #ff5e57;
+  border: none;
+  color: white;
+  padding: 10px;
+  border-radius: 4px;
+}
+
+#add_to_watchlist a{
+  text-decoration: none;
+  color: white;
+}
+
+#movieTitle, #watchlistmovieTitle{
+  font-size: 39px;
+font-weight: bold;
+color: black;
+}
+
+.modal_label{
+  font-size: 13px;
+font-weight: bold;
+}
+
+
+#movieGenre,#movieRating,#moviePlot,#movieDirector,#watchlistmovieGenre,#watchlistmovieRating,#watchlistmoviePlot,#watchlistmovieDirector{
+  font-weight: normal;
+}
