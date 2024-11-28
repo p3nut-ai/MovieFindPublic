@@ -27,7 +27,7 @@ A simple and user-friendly web application that allows users to search for movie
 
 1. Clone the repository:
    ```bash
-   git clone [https://github.com/your-username/movie-watchlist.git](https://github.com/p3nut-ai/MovieFindPublic)
+   git clone (https://github.com/p3nut-ai/MovieFindPublic)
    cd MovieFindPublic
    pip install -r requirements.txt
    python index.py   
