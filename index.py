@@ -11,8 +11,8 @@ app.config['SECRET_KEY'] = 'AsdsUasdask'
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 
-OMDB_API_KEY = ''
-OMDB_API_URL = ''
+OMDB_API_KEY = '8ca55281'
+OMDB_API_URL = 'http://www.omdbapi.com/'
 
 
 @login_manager.user_loader
